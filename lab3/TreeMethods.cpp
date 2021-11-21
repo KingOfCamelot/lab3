@@ -39,6 +39,8 @@ using namespace std;
 	}
 	node* Tree::remove(node* node2, int val)
 	{
+		if (Root == NULL) throw invalid_argument("Tree is empty");
+		if (!contains(val)) throw invalid_argument("This element not found");
 		if (node2 == NULL) return node2;
 		if (val == node2->info)
 		{
@@ -69,10 +71,8 @@ using namespace std;
 			delete node2;
 			return tmp;
 		}
-		else if (val < node2->info)
-			node2->LeftBranch = remove(node2->LeftBranch, val);
-		else
-			node2->RightBranch = remove(node2->RightBranch, val);
+		else if (val < node2->info) node2->LeftBranch = remove(node2->LeftBranch, val);
+		else node2->RightBranch = remove(node2->RightBranch, val);
 		return node2;
 	}
 
@@ -105,17 +105,17 @@ using namespace std;
 	  curr = headq->key;
 	  int rmbr_elem = headq->key->info;
 	  pop();
-	  if (curr->RightBranch)  push(curr->LeftBranch);
+	  if (curr->RightBranch)push(curr->LeftBranch);
 	  if (curr->RightBranch)push(curr->RightBranch);
 	  return rmbr_elem;
-  }
-  Iterator* Tree::create_bft_Iterator(node* elem)
-  {
-	  return new bft_Iterator(elem);
   }
   bool Tree::bft_Iterator::has_next()
   {
 	  return headq != nullptr;
+  }
+  Iterator* Tree::create_bft_Iterator(node* elem)
+  {
+	  return new bft_Iterator(elem);
   }
 
   void Tree::dft_Iterator::push(node* value)
@@ -168,13 +168,12 @@ int main()
 	{
 		array[i] = rand() % 10;
 		berezka.insert(array[i], &berezka.Root);
-		cout << array[i] << " ";
 	}
-	cout << endl;
 	berezka.PrintTree(berezka.Root);
 	berezka.contains(array[6]);
-	berezka.remove(berezka.Root, array[6]);
+	berezka.remove(berezka.Root, array[5]);
+	berezka.PrintTree(berezka.Root);
 	Iterator* elem = berezka.create_bft_Iterator(berezka.Root);
-	Iterator* elem2	 = berezka.create_dft_Iterator(berezka.Root);
+	Iterator* elem2 = berezka.create_dft_Iterator(berezka.Root);
 	return 0;
 }

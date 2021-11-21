@@ -46,8 +46,8 @@ public:
     Iterator* create_dft_Iterator(node* elem);
     class dft_Iterator : public Iterator 
     {
+        private: node* curr;
         public:
-            node* curr;
             dft_Iterator(node* root)
             {
                 stack* elem = new stack;

@@ -1,5 +1,2 @@
-﻿  main.cpp
-C:\Users\Артур\Desktop\АиСД\3\lab3\lab3\main.cpp(166,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  TestForBinaryTree.cpp
-  Создание кода...
+﻿  TestForBinaryTree.cpp
   TestForBinaryTree.vcxproj -> C:\Users\Артур\Desktop\АиСД\3\lab3\Debug\TestForBinaryTree.dll
