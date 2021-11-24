@@ -3,171 +3,175 @@
 #include "ClassTree.h"
 #include "iterator.h"
 using namespace std;
-	void Tree::insert(int element, node**t)
+void BinarySearchTree::PrivateInsert(int value, node** temp)
+{
+	if ((*temp) == NULL)
 	{
-		if ((*t) == NULL)
-		{
-			(*t) = new node;
-			(*t)->info = element;
-			(*t)->LeftBranch = 0;
-			(*t)->RightBranch = 0;
-			return;
-		}
-		if (element > (*t)->info) insert(element, &(*t)->RightBranch);
-		else insert(element, &(*t)->LeftBranch);
-	}
-	void Tree::PrintTree(node* t)
-	{
-		if (t == 0) return;
-		u++;
-		PrintTree(t->LeftBranch);
-		for (int i = 0; i < u; ++i) cout << " ";
-		cout << t->info << endl;
-		PrintTree(t->RightBranch);
-		u--;
+		(*temp) = new node;
+		(*temp)->info = value;
+		(*temp)->LeftBranch = 0;
+		(*temp)->RightBranch = 0;
 		return;
 	}
-	bool Tree::contains(int value)
+	if (value > (*temp)->info) PrivateInsert(value, &(*temp)->RightBranch);
+	else PrivateInsert(value, &(*temp)->LeftBranch);
+}
+	void BinarySearchTree::insert(int value)
 	{
-		node* tmp_ptr = Root;
-		while (tmp_ptr != nullptr && tmp_ptr->info != value) 
-		{
-			if (tmp_ptr->info > value) tmp_ptr = tmp_ptr->LeftBranch;
-			else tmp_ptr = tmp_ptr->RightBranch;
-		}
-		return tmp_ptr != nullptr;
+		PrivateInsert(value, &Root);
 	}
-	node* Tree::remove(node* node2, int val)
+	void BinarySearchTree::PrintTree(node* temp)
 	{
-		if (Root == NULL) throw invalid_argument("Tree is empty");
-		if (!contains(val)) throw invalid_argument("This element not found");
-		if (node2 == NULL) return node2;
-		if (val == node2->info)
+		if (temp == 0) return;
+		ValueOutputLevel++;
+		PrintTree(temp->LeftBranch);
+		for (int i = 0; i < ValueOutputLevel; ++i) cout << " ";
+		cout << temp->info << endl;
+		PrintTree(temp->RightBranch);
+		ValueOutputLevel--;
+		return;
+	}
+	bool BinarySearchTree::contains(int value)
+	{
+		node* pointer = Root;
+		while (pointer != nullptr && pointer->info != value)
 		{
-			node* tmp;
+			if (pointer->info > value) pointer = pointer->LeftBranch;
+			else pointer = pointer->RightBranch;
+		}
+		return pointer != nullptr;
+	}
+	node* BinarySearchTree::remove(node* node2, int value)
+	{
+		if (Root == NULL) throw invalid_argument("BinarySearchTree is empty");
+		if (!contains(value)) throw invalid_argument("This element not found");
+		if (node2 == NULL) return node2;
+		if (value == node2->info)
+		{
+			node* temp;
 			if (node2->RightBranch == NULL)
-				tmp = node2->LeftBranch;
+				temp = node2->LeftBranch;
 			else 
 			{
-				node* ptr = node2->RightBranch;
-				if (ptr->LeftBranch == NULL) 
+				node* pointer = node2->RightBranch;
+				if (pointer->LeftBranch == NULL)
 				{
-					ptr->LeftBranch = node2->LeftBranch;
-					tmp = ptr;
+					pointer->LeftBranch = node2->LeftBranch;
+					temp = pointer;
 				}
 				else {
-					node* pmin = ptr->LeftBranch;
-					while (pmin->LeftBranch != NULL)
+					node* min = pointer->LeftBranch;
+					while (min->LeftBranch != NULL)
 					{
-						ptr = pmin;
-						pmin = ptr->LeftBranch;
+						pointer = min;
+						min = pointer->LeftBranch;
 					}
-					ptr->LeftBranch = pmin->RightBranch;
-					pmin->LeftBranch = node2->LeftBranch;
-					pmin->RightBranch = node2->RightBranch;
-					tmp = pmin;
+					pointer->LeftBranch = min->RightBranch;
+					min->LeftBranch = node2->LeftBranch;
+					min->RightBranch = node2->RightBranch;
+					temp = min;
 				}
 			}
 			delete node2;
-			return tmp;
+			return temp;
 		}
-		else if (val < node2->info) node2->LeftBranch = remove(node2->LeftBranch, val);
-		else node2->RightBranch = remove(node2->RightBranch, val);
+		else if (value < node2->info) node2->LeftBranch = remove(node2->LeftBranch, value);
+		else node2->RightBranch = remove(node2->RightBranch, value);
 		return node2;
 	}
 
-  void Tree::bft_Iterator::push(node* value)
+  void BinarySearchTree::bft_Iterator::push(node* value)
   {
-	  turn* elem = new turn;
-	  elem->key = value;
-	  elem->next = nullptr;
-	  if (headq == nullptr) 
+	  turn* element = new turn;
+	  element->key = value;
+	  element->next = nullptr;
+	  if (Head == nullptr)
 	  {
-		  headq = elem;
-		  headq->next = nullptr;
-		  last = elem;
+		  Head = element;
+		  Head->next = nullptr;
+		  Last = element;
 	  }
 	  else 
 	  {
-		  last->next = elem;
-		  last = last->next;
+		  Last->next = element;
+		  Last = Last->next;
 	  }
   }
-  void Tree::bft_Iterator::pop()
+  void BinarySearchTree::bft_Iterator::pop()
   {
-	  turn* tmp_ptr = headq->next;
-	  headq->next = nullptr;
-	  delete headq;
-	  headq = tmp_ptr;
+	  turn* pointer = Head->next;
+	  Head->next = nullptr;
+	  delete Head;
+	  Head = pointer;
   }
-  int Tree::bft_Iterator::next()
+  int BinarySearchTree::bft_Iterator::next()
   {
-	  curr = headq->key;
-	  int rmbr_elem = headq->key->info;
+	  Current = Head->key;
+	  int temp = Head->key->info;
 	  pop();
-	  if (curr->RightBranch)push(curr->LeftBranch);
-	  if (curr->RightBranch)push(curr->RightBranch);
-	  return rmbr_elem;
+	  if (Current->RightBranch)push(Current->LeftBranch);
+	  if (Current->RightBranch)push(Current->RightBranch);
+	  return temp;
   }
-  bool Tree::bft_Iterator::has_next()
+  bool BinarySearchTree::bft_Iterator::has_next()
   {
-	  return headq != nullptr;
+	  return Head != nullptr;
   }
-  Iterator* Tree::create_bft_Iterator(node* elem)
+  Iterator* BinarySearchTree::create_bft_Iterator(node* elem)
   {
 	  return new bft_Iterator(elem);
   }
 
-  void Tree::dft_Iterator::push(node* value)
+  void BinarySearchTree::dft_Iterator::push(node* value)
   {
 	  stack* elem = new stack;
 	  elem->key = value;
-	  if (top == nullptr) 
+	  if (Head == nullptr)
 	  {
-		  top = elem;
-		  top->prev = nullptr;
+		  Head = elem;
+		  Head->Previous = nullptr;
 	  }
 	  else 
 	  {
-		  elem->prev = top;
-		  top = elem;
+		  elem->Previous = Head;
+		  Head = elem;
 	  }
   }
-  void Tree::dft_Iterator::pop()
+  void BinarySearchTree::dft_Iterator::pop()
   {
-	  stack* tmp_ptr = top;
-	  node* rmbr_key = top->key;
-	  top = tmp_ptr->prev;
-	  tmp_ptr->prev = nullptr;
-	  delete tmp_ptr;
+	  stack* pointer = Head;
+	  node* temp = Head->key;
+	  Head = pointer->Previous;
+	  pointer->Previous = nullptr;
+	  delete pointer;
   }
-  bool Tree::dft_Iterator::has_next()
+  bool BinarySearchTree::dft_Iterator::has_next()
   {
-	  return top != nullptr;
+	  return Head != nullptr;
   }
-  int Tree::dft_Iterator::next()
+  int BinarySearchTree::dft_Iterator::next()
   {
-	  int rmbr_elem;
-	  curr = top->key;
-	  rmbr_elem = top->key->info;
+	  int temp;
+	  Current = Head->key;
+	  temp = Head->key->info;
 	  pop();
-	  if (curr->RightBranch) push(curr->RightBranch);
-	  if (curr->LeftBranch) push(curr->LeftBranch);
-	  return rmbr_elem;
+	  if (Current->RightBranch) push(Current->RightBranch);
+	  if (Current->LeftBranch) push(Current->LeftBranch);
+	  return temp;
   }
-  Iterator* Tree::create_dft_Iterator(node* elem)
+  Iterator* BinarySearchTree::create_dft_Iterator(node* elem)
   {
 	  return new dft_Iterator(elem);
   }
 int main()
 {
-	Tree berezka;
+	BinarySearchTree berezka;
 	srand(time(0));
 	int array[10];
 	for (int i = 0; i < 10; ++i)
 	{
 		array[i] = rand() % 10;
-		berezka.insert(array[i], &berezka.Root);
+		berezka.insert(array[i]);
 	}
 	berezka.PrintTree(berezka.Root);
 	berezka.contains(array[6]);

@@ -8,36 +8,37 @@ struct node
     node* LeftBranch;
     node* RightBranch;
 };
-class Tree
+class BinarySearchTree
 {
+private: void PrivateInsert(int element, node** t);
 public:
-	void insert(int element, node** t);
+	void insert(int value);
 	bool contains(int value);
-    node* remove(node* node, int val);
-	void PrintTree(node* t);
-	int u;
+    node* remove(node* node, int value);
+	void PrintTree(node* temp);
+	int ValueOutputLevel;
     node* Root = 0;
     Iterator* create_bft_Iterator(node* elem);
     class bft_Iterator : public Iterator 
     {
-        private: node* curr;
+        private: node* Current;
         public:
             bft_Iterator(node* root)
             {
                 turn* elem = new turn;
-                headq = elem;
+                Head = elem;
                 elem->key = root;
                 elem->next = nullptr;
-                last = elem;
-                curr = root;
+                Last = elem;
+                Current = root;
             };
             struct turn 
             {
                 node* key;
                 turn* next;
             };
-            turn* headq;
-            turn* last;
+            turn* Head;
+            turn* Last;
             void push(node* value);
             void pop();
             int next() override;
@@ -46,21 +47,21 @@ public:
     Iterator* create_dft_Iterator(node* elem);
     class dft_Iterator : public Iterator 
     {
-        private: node* curr;
+        private: node* Current;
         public:
             dft_Iterator(node* root)
             {
                 stack* elem = new stack;
                 elem->key = root;
-                elem->prev = nullptr;
-                top = elem;
+                elem->Previous = nullptr;
+                Head = elem;
             };
-            struct stack 
+            struct stack
             {
                 node* key;
-                stack* prev;
+                stack* Previous;
             };
-            stack* top;
+            stack* Head;
             void push(node* value);
             void pop();
             int next() override;
